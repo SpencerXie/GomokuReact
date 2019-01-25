@@ -11,35 +11,67 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  renderSquare(i) {
+  renderSquare(k) {
     return (
       <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
+        value={this.props.squares[k]}
+        onClick={() => this.props.onClick(k)}
       />
     );
   }
 
   render() {
+    // 重写 Board(棋盘) 使用两个循环来制作方格，此处采用箭头函数使this指针仍然指向Board。
+    // return 语句中的{...}中不能出现变量或函数的定义语句，必须为打印输出语句。
+    // 这里写了两种实现方法，一种是基于箭头函数调用方法用两个for循环实现，另一种是采用了数组map()方法的特性来实现。
+
+    // 方法一
+    let fun_row = ()=>{
+      let res = [];
+      let fun_col = (i)=>{
+        let res_sub = [];
+        for(let j = 0; j < this.props.SizeLen; j++) {
+          res.push(
+            this.renderSquare(this.props.SizeLen*i+j)
+          );
+        };
+      };
+      for(let i = 0; i < this.props.SizeLen; i++) {
+        res.push(
+          <div className="board-row">
+          {fun_col(i)}
+          </div>
+          );
+      };
+      return res;
+    };
     return (
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+      {fun_row()}
       </div>
     );
+
+    // 方法二
+    // let cols = [], rows = [], m = 0, length = this.props.SizeLen;
+    // while (m++ < length)
+    // {
+    //   cols.push(m-1);
+    //   rows.push(m-1);
+    // }
+    // return(
+    //   <div>
+    //   {
+    //     rows.map((i) =>{
+    //       return (
+    //         <div className="board-row">
+    //         {cols.map((j)=>this.renderSquare(length*i+j))}
+    //         </div>
+    //       );
+    //     })
+    //   }
+    //   </div>
+    // );
+    //
   }
 }
 
@@ -53,7 +85,8 @@ class Game extends React.Component {
         }
       ],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      SizeLen: 3
     };
   }
 
@@ -112,6 +145,7 @@ class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={i => this.handleClick(i)}
+            SizeLen={this.state.SizeLen}
           />
         </div>
         <div className="game-info">
