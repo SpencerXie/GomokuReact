@@ -11,33 +11,45 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  renderSquare(i) {
+  renderSquare(k) {
     return (
       <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
+        value={this.props.squares[k]}
+        onClick={() => this.props.onClick(k)}
       />
     );
   }
 
   render() {
-    return (
+    // var list = (length) => {
+    //       var res = [];
+    //       for(var i = 0; i < length; i++) {
+    //         res.push(<h2 key={i}>hello react</h2>);
+    //       }
+    //       return res;
+    //     };
+    // return (
+    //     <div>hello {list(3)}
+    //     </div>
+    //   );
+
+    let cols = [], rows = [], m = 0, length = this.props.SizeLen;
+    while (m++ < length)
+    {
+      cols.push(m-1);
+      rows.push(m-1);
+    }
+    return(
       <div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
-        </div>
+      {
+        rows.map((i) =>{
+          return (
+            <div className="board-row">
+            {cols.map((j)=>this.renderSquare(length*i+j))}
+            </div>
+          );
+        })
+      }
       </div>
     );
   }
@@ -53,7 +65,8 @@ class Game extends React.Component {
         }
       ],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      SizeLen: 3
     };
   }
 
@@ -112,6 +125,7 @@ class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={i => this.handleClick(i)}
+            SizeLen={this.state.SizeLen}
           />
         </div>
         <div className="game-info">
