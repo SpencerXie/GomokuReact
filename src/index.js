@@ -21,37 +21,57 @@ class Board extends React.Component {
   }
 
   render() {
-    // var list = (length) => {
-    //       var res = [];
-    //       for(var i = 0; i < length; i++) {
-    //         res.push(<h2 key={i}>hello react</h2>);
-    //       }
-    //       return res;
-    //     };
-    // return (
-    //     <div>hello {list(3)}
-    //     </div>
-    //   );
+    // 重写 Board(棋盘) 使用两个循环来制作方格，此处采用箭头函数使this指针仍然指向Board。
+    // return 语句中的{...}中不能出现变量或函数的定义语句，必须为打印输出语句。
+    // 这里写了两种实现方法，一种是基于箭头函数调用方法用两个for循环实现，另一种是采用了数组map()方法的特性来实现。
 
-    let cols = [], rows = [], m = 0, length = this.props.SizeLen;
-    while (m++ < length)
-    {
-      cols.push(m-1);
-      rows.push(m-1);
-    }
-    return(
-      <div>
-      {
-        rows.map((i) =>{
-          return (
-            <div className="board-row">
-            {cols.map((j)=>this.renderSquare(length*i+j))}
-            </div>
+    // 方法一
+    let fun_row = ()=>{
+      let res = [];
+      let fun_col = (i)=>{
+        let res_sub = [];
+        for(let j = 0; j < this.props.SizeLen; j++) {
+          res.push(
+            this.renderSquare(this.props.SizeLen*i+j)
           );
-        })
-      }
+        };
+      };
+      for(let i = 0; i < this.props.SizeLen; i++) {
+        res.push(
+          <div className="board-row">
+          {fun_col(i)}
+          </div>
+          );
+      };
+      return res;
+    };
+    return (
+      <div>
+      {fun_row()}
       </div>
     );
+
+    // 方法二
+    // let cols = [], rows = [], m = 0, length = this.props.SizeLen;
+    // while (m++ < length)
+    // {
+    //   cols.push(m-1);
+    //   rows.push(m-1);
+    // }
+    // return(
+    //   <div>
+    //   {
+    //     rows.map((i) =>{
+    //       return (
+    //         <div className="board-row">
+    //         {cols.map((j)=>this.renderSquare(length*i+j))}
+    //         </div>
+    //       );
+    //     })
+    //   }
+    //   </div>
+    // );
+    //
   }
 }
 
