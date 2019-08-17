@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-let GameSizeLen = 5;
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -82,12 +81,12 @@ class Game extends React.Component {
     this.state = {
       history: [
         {
-          squares: Array(this.props.SizeLen*this.props.SizeLen).fill(null)
+          squares: Array(9).fill(null)
         }
       ],
       stepNumber: 0,
       xIsNext: true,
-      SizeLen: this.props.SizeLen
+      SizeLen: 3
     };
   }
 
@@ -95,7 +94,7 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
-    if (calculateWinner(squares,this.state.SizeLen) || squares[i]) {
+    if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
@@ -120,7 +119,7 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares,this.state.SizeLen);
+    const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -160,46 +159,24 @@ class Game extends React.Component {
 
 // ========================================
 
-ReactDOM.render(<Game SizeLen={GameSizeLen} />, document.getElementById("root"));
+ReactDOM.render(<Game />, document.getElementById("root"));
 
-// ========================================
-function calculateWinner(squares,SizeLen) {
-  // lines用来存游戏结束的“状态”，当且仅当棋盘中所有行、列或两个对角线中元素都相等时游戏结束。
-  const lines = new Array(SizeLen*2+2);
-  let line_x = Array(SizeLen).fill(null),line_y = Array(SizeLen).fill(null);
-  for(let i=0; i<SizeLen; i++)
-  {
-    let sub_line_raw = Array(SizeLen).fill(null),sub_line_col = Array(SizeLen).fill(null);
-
-    for(let j=0;j<SizeLen;j++)
-    {
-      sub_line_raw[j] = i*SizeLen+j;
-      sub_line_col[j] = j*SizeLen+i;
-    }
-    lines[i] = sub_line_raw;
-    lines[i+SizeLen] = sub_line_col;
-    line_x[i] = i*(SizeLen+1);
-    line_y[i] = (i+1)*(SizeLen-1);
-  }
-  lines[SizeLen*2] = line_x;
-  lines[SizeLen*2+1] = line_y;
-
-  // 以下用于判断squares中的状态是否达到“结束”状态，采用遍历所有胜利状态的方法
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    let Is_FIN = false;  // 用于记录在一个line中所有元素是否相等的标识
-    for(let j = 0; j < SizeLen; j++)  // 因为Size不确定，所以用for循环来遍历
-    {
-      if(squares[line[0]]&&squares[line[0]]===squares[line[j]])
-        Is_FIN = true;
-      else{  // 如果有一个元素不等，则结束此行的判断
-        Is_FIN = false;
-        break;
-      }
+    const [a, b, c] = lines[i];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
     }
-    if(Is_FIN)
-      return squares[line[0]];
   }
   return null;
-
 }
